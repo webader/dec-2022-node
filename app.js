@@ -8,56 +8,78 @@
 //
 // !руками нічого не робимо, все через fs
 
-const fs = require('fs');
-const path = require('path');
+const fs = require('node:fs/promises');
+const path = require('node:path');
 
-//Створюємо папку 'folder'
-fs.mkdir(path.join(__dirname, 'folder'), (err) => {
-    if (err) throw new Error(err.message);
-})
+const foo = async () => {
+    //Створення папки 'baseFolder'
+    const basePath = path.join(process.cwd(), 'baseFolder');
 
-// Створюємо  файл text.txt в папці 'folder'
-fs.writeFile(path.join(__dirname, 'folder', 'text.txt'), 'Hello from again', (err) => {
-    if (err) throw new Error(err.message);
-})
+    await fs.mkdir(basePath, {recursive: true});
+    const fileNames = ['file1.txt', 'file2.txt', 'file3.txt', 'file4.txt'];
+    const folderNames = ['folder1', 'folder2', 'folder3', 'folder4'];
 
-//Створюємо папку 'folder2'
-fs.mkdir(path.join(__dirname, 'folder2'), (err) => {
-    if (err) throw new Error(err.message);
-})
+    for (const file of fileNames) {
+        await fs.writeFile(path.join(basePath, file), 'HELLO');
+    }
+    for (const folder of folderNames) {
+        await fs.mkdir(path.join(basePath, folder), {recursive: true});
+    }
 
-// Створюємо  файл text2.txt в папці 'folder2'
-fs.writeFile(path.join(__dirname, 'folder2', 'text2.txt'), 'Hello from again', (err) => {
-    if (err) throw new Error(err.message);
-})
+    const files = await fs.readdir(basePath);
+    for (const file of files) {
+        const stat = await fs.stat(path.join(basePath, file));
+        console.log(path.join(basePath, file), ' : ', stat.isDirectory() ? 'folder' : 'file');
+    }
+}
+foo();
 
-//Створюємо папку 'folder3'
-fs.mkdir(path.join(__dirname, 'folder3'), (err) => {
-    if (err) throw new Error(err.message);
-})
 
-// Створюємо  файл text3.txt в папці 'folder'
-fs.writeFile(path.join(__dirname, 'folder3', 'text3.txt'), 'Hello from again', (err) => {
-    if (err) throw new Error(err.message);
-})
+// const foo = async () => {
+//     const basePath = path.join(process.cwd(), 'baseFolder');
+//
+//     await fs.mkdir(basePath, {recursive: true});
+//     const fileNames = ['file1.txt', 'file2.txt', 'file3.txt', 'file4.txt'];
+//     const folderNames = ['folder1', 'folder2', 'folder3', 'folder4'];
+//
+//     for (const folder of folderNames) {
+//         const folderPath = path.join(basePath, folder);
+//         await fs.mkdir(folderPath, {recursive: true});
+//
+//         for (const file of fileNames) {
+//             await fs.writeFile(path.join(folderPath, file), 'HELLO');
+//         }
+//     }
+//
+//     const files = await fs.readdir(basePath);
+//     for (const file of files) {
+//         const stat = await fs.stat(path.join(basePath, file));
+//         console.log(path.join(basePath, file), ' : ', stat.isDirectory() ? 'folder' : 'file');
+//     }
+// }
+// foo();
 
-//Створюємо папку 'folder4'
-fs.mkdir(path.join(__dirname, 'folder4'), (err) => {
-    if (err) throw new Error(err.message);
-})
 
-// Створюємо  файл text4.txt в папці 'folder4'
-fs.writeFile(path.join(__dirname, 'folder4', 'text4.txt'), 'Hello from again', (err) => {
-    if (err) throw new Error(err.message);
-})
-
-//Створюємо папку 'folder5'
-fs.mkdir(path.join(__dirname, 'folder5'), (err) => {
-    if (err) throw new Error(err.message);
-})
-
-// Створюємо  файл text5.txt в папці 'folder5'
-fs.writeFile(path.join(__dirname, 'folder5', 'text.txt5'), 'Hello from again', (err) => {
-    if (err) throw new Error(err.message);
-})
-
+// const foo = async () => {
+//     const basePath = path.join(process.cwd(), 'baseFolder');
+//
+//     await fs.mkdir(basePath, {recursive: true});
+//     const fileNames = ['file1.txt', 'file2.txt', 'file3.txt', 'file4.txt', 'file5.txt', 'file6.txt'];
+//     const folderNames = ['folder1', 'folder2', 'folder3', 'folder4'];
+//
+//     await Promise.all(folderNames.map(async (folder) => {
+//         const folderPath = path.join(basePath, folder);
+//         await fs.mkdir(folderPath, {recursive: true});
+//
+//         await Promise.allSettled(fileNames.map(async (file) => {
+//             await fs.writeFile(path.join(folderPath, file), 'HELLO');
+//         }));
+//     }));
+//
+//     const files = await fs.readdir(basePath);
+//     for (const file of files) {
+//         const stat = await fs.stat(path.join(basePath, file));
+//         console.log(path.join(basePath, file), ' : ', stat.isDirectory() ? 'folder' : 'file');
+//     }
+// }
+foo();
